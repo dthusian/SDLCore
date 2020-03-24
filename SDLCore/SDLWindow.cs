@@ -32,6 +32,8 @@ namespace SDLCore
   }
   public abstract class SDLWindow : ISDLHandle
   {
+    public int Width { get; private set; }
+    public int Height { get; private set; }
     IntPtr sdlWindowPtr;
     protected SDLRenderer Renderer;
     public const int WindowPosCentered = SDL.SDL_WINDOWPOS_CENTERED;
@@ -43,21 +45,15 @@ namespace SDLCore
         throw new SDLException(string.Format("Failed to create window. Error: {0}", SDL.SDL_GetError()));
       }
       SDL.SDL_ShowWindow(sdlWindowPtr);
-      Renderer = new SDLRenderer(sdlWindowPtr);
+      Width = w;
+      Height = h;
+      Renderer = new SDLRenderer(sdlWindowPtr, Width, Height);
     }
-
-    public SDLRenderer CreateRenderer() {
-      return new SDLRenderer(sdlWindowPtr);
-    }
-
-    public void OnMsg()
-    {
-      Renderer.Draw();
-    }
-
-    public abstract void OnQuit();
-    public abstract void OnMouseDown(int x, int y);
-    public abstract void OnKeyDown(KeyAction key);
+    public virtual void OnQuit() { }
+    public virtual void OnPaint() { Renderer.Draw(); }
+    public virtual void OnMouseDown(int x, int y) { }
+    public virtual void OnMouseUp(int x, int y) { }
+    public virtual void OnKeyDown(KeyAction key) { }
     public IntPtr GetPointer()
     {
       return sdlWindowPtr;

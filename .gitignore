@@ -1,0 +1,7 @@
+.vs/
+bin/
+Bin/
+obj/
+Obj/
+*.suo
+Properties/

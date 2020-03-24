@@ -24,13 +24,19 @@ namespace SDLCore
       int w = 0, h = 0;
       if(width == -1 || height == -1)
       {
-        SDL.SDL_GetRendererOutputSize(sdlRendererPtr, out w, out h);
+        if(SDL.SDL_GetRendererOutputSize(sdlRendererPtr, out w, out h) != 0)
+        {
+          throw new SDLException(string.Format("Failed to initialize render output size. Error: {0}", SDL.SDL_GetError()));
+        }
       }
       else
       {
         w = width;
         h = height;
-        SDL.SDL_RenderSetLogicalSize(sdlRendererPtr, w, h);
+        if(SDL.SDL_RenderSetLogicalSize(sdlRendererPtr, w, h) != 0)
+        {
+          throw new SDLException(string.Format("Failed to initialize render output size. Error: {0}", SDL.SDL_GetError()));
+        }
       }
       bitmap = new Bitmap(w, h);
       Width = w;
@@ -42,15 +48,29 @@ namespace SDLCore
       // Graphics already renders to bitmap
       // Bitmap -> SDL_Surface
       BitmapData dat = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-      IntPtr surfacePtr = SDL.SDL_CreateRGBSurfaceFrom(dat.Scan0, bitmap.Width, bitmap.Height, 32, 4, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff00000);
+      IntPtr surfacePtr = SDL.SDL_CreateRGBSurfaceFrom(dat.Scan0, bitmap.Width, bitmap.Height, 32, dat.Stride, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+      if(surfacePtr == IntPtr.Zero)
+      {
+        throw new SDLException(string.Format("Failed to create SDL surface. Error: {0}", SDL.SDL_GetError()));
+      }
       // SDL_Surface -> SDL_Texture
       IntPtr texturePtr = SDL.SDL_CreateTextureFromSurface(sdlRendererPtr, surfacePtr);
-      SDL.SDL_FreeSurface(surfacePtr);
+      if(surfacePtr == IntPtr.Zero)
+      {
+        throw new SDLException(string.Format("Failed to create SDL texture. Error: {0}", SDL.SDL_GetError()));
+      }
       // SDL_Texture -> SDL_Renderer
-      SDL.SDL_RenderCopy(sdlRendererPtr, texturePtr, IntPtr.Zero, IntPtr.Zero);
-      SDL.SDL_DestroyTexture(texturePtr);
+      if(SDL.SDL_RenderCopy(sdlRendererPtr, texturePtr, IntPtr.Zero, IntPtr.Zero) != 0)
+      {
+        throw new SDLException(string.Format("Failed to render. Error: {0}", SDL.SDL_GetError()));
+      }
       // Render the renderer
       SDL.SDL_RenderPresent(sdlRendererPtr);
+      // Unlock bitmap to avoid cryptic GDI+ errors
+      bitmap.UnlockBits(dat);
+      // Free stuff
+      SDL.SDL_FreeSurface(surfacePtr);
+      SDL.SDL_DestroyTexture(texturePtr);
     }
     public IntPtr GetPointer()
     {

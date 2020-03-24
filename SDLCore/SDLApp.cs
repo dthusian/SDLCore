@@ -55,7 +55,7 @@ namespace SDLCore
         }
         foreach(SDLWindow wnd in windows)
         {
-          wnd.OnMsg();
+          wnd.OnPaint();
         }
       }
     }
@@ -63,6 +63,10 @@ namespace SDLCore
     public void Dispose()
     {
       SDL.SDL_Quit();
+      foreach(SDLWindow wnd in windows)
+      {
+        wnd.Dispose();
+      }
     }
   }
 }

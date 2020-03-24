@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SDLCore", "SDLCore\SDLCore.csproj", "{87355134-8575-4EFF-A7E9-8678B32846BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDLCore.TestGUI", "SDLCore.TestGUI\SDLCore.TestGUI.csproj", "{8A9ED01F-F7AF-487F-B7FC-776338678EA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{87355134-8575-4EFF-A7E9-8678B32846BA}.Release|x64.Build.0 = Release|Any CPU
 		{87355134-8575-4EFF-A7E9-8678B32846BA}.Release|x86.ActiveCfg = Release|Any CPU
 		{87355134-8575-4EFF-A7E9-8678B32846BA}.Release|x86.Build.0 = Release|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Debug|x64.Build.0 = Debug|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Debug|x86.Build.0 = Debug|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Release|x64.ActiveCfg = Release|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Release|x64.Build.0 = Release|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Release|x86.ActiveCfg = Release|Any CPU
+		{8A9ED01F-F7AF-487F-B7FC-776338678EA3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
