@@ -7,9 +7,11 @@ namespace SDLCore.TestGUI
 {
   class TestWindow1 : SDLWindow
   {
-    public TestWindow1() : base("SDLCore Test Window 1", WindowPosCentered, WindowPosCentered, 200, 200, 0)
+    public int NumPaints = 0;
+    public DateTime ProfileStart;
+    public TestWindow1() : base("SDLCore Test Window 1", WindowPosCentered, WindowPosCentered, 800, 450, 0)
     {
-
+      ProfileStart = DateTime.Now;
     }
 
     public override void OnPaint() {
@@ -19,6 +21,14 @@ namespace SDLCore.TestGUI
       graphics.FillEllipse(brush, 25, 25, 25, 25);
       graphics.Flush();
       Renderer.Draw();
+      NumPaints++;
+      if(NumPaints == 600)
+      {
+        DateTime ProfileEnd = DateTime.Now;
+        NumPaints = 0;
+        Console.WriteLine(ProfileEnd - ProfileStart);
+        ProfileStart = DateTime.Now;
+      }
     }
   }
 }

@@ -12,6 +12,7 @@ namespace SDLCore
 
     // Rendering components
     IntPtr sdlRendererPtr;
+    IntPtr sdlTexturePtr;
     Bitmap bitmap;
     Graphics gdiRendering;
     internal SDLRenderer(IntPtr windowPtr, int width = -1, int height = -1)
@@ -42,25 +43,19 @@ namespace SDLCore
       Width = w;
       Height = h;
       gdiRendering = Graphics.FromImage(bitmap);
+      sdlTexturePtr = SDL.SDL_CreateTexture(sdlRendererPtr, SDL.SDL_PIXELFORMAT_ARGB8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, w, h);
     }
     public void Draw()
     {
       // Graphics already renders to bitmap
-      // Bitmap -> SDL_Surface
+      // Bitmap -> SDL_Texture
       BitmapData dat = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-      IntPtr surfacePtr = SDL.SDL_CreateRGBSurfaceFrom(dat.Scan0, bitmap.Width, bitmap.Height, 32, dat.Stride, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-      if(surfacePtr == IntPtr.Zero)
+      if(SDL.SDL_UpdateTexture(sdlTexturePtr, IntPtr.Zero, dat.Scan0, dat.Stride) != 0)
       {
-        throw new SDLException(string.Format("Failed to create SDL surface. Error: {0}", SDL.SDL_GetError()));
-      }
-      // SDL_Surface -> SDL_Texture
-      IntPtr texturePtr = SDL.SDL_CreateTextureFromSurface(sdlRendererPtr, surfacePtr);
-      if(surfacePtr == IntPtr.Zero)
-      {
-        throw new SDLException(string.Format("Failed to create SDL texture. Error: {0}", SDL.SDL_GetError()));
+        throw new SDLException(string.Format("Failed to render. Error: {0}", SDL.SDL_GetError()));
       }
       // SDL_Texture -> SDL_Renderer
-      if(SDL.SDL_RenderCopy(sdlRendererPtr, texturePtr, IntPtr.Zero, IntPtr.Zero) != 0)
+      if(SDL.SDL_RenderCopy(sdlRendererPtr, sdlTexturePtr, IntPtr.Zero, IntPtr.Zero) != 0)
       {
         throw new SDLException(string.Format("Failed to render. Error: {0}", SDL.SDL_GetError()));
       }
@@ -68,9 +63,6 @@ namespace SDLCore
       SDL.SDL_RenderPresent(sdlRendererPtr);
       // Unlock bitmap to avoid cryptic GDI+ errors
       bitmap.UnlockBits(dat);
-      // Free stuff
-      SDL.SDL_FreeSurface(surfacePtr);
-      SDL.SDL_DestroyTexture(texturePtr);
     }
     public IntPtr GetPointer()
     {

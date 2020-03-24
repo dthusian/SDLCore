@@ -9,7 +9,6 @@ namespace SDLCore.TestGUI
     {
       SDLApp app = new SDLApp();
       app.RegisterWindow(new TestWindow1());
-      app.RegisterWindow(new TestWindow1());
       app.RunWindowLoop();
       app.Dispose();
     }
