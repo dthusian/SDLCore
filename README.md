@@ -1,4 +1,4 @@
-# cssh
+# SDLCore
 
 - This project is licensed under an MIT license.
 - SDLCore/SDL2.dll is an SDL binary for Visual Studio. It is licensed under the zlib license. Check http://libsdl.org/
