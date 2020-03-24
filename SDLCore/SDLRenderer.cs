@@ -22,7 +22,7 @@ namespace SDLCore
       {
         throw new SDLException(string.Format("Failed to create renderer. Error: {0}", SDL.SDL_GetError()));
       }
-      int w = 0, h = 0;
+      int w, h;
       if(width == -1 || height == -1)
       {
         if(SDL.SDL_GetRendererOutputSize(sdlRendererPtr, out w, out h) != 0)

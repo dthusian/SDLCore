@@ -47,7 +47,7 @@ namespace SDLCore
       SDL.SDL_ShowWindow(sdlWindowPtr);
       Width = w;
       Height = h;
-      Renderer = new SDLRenderer(sdlWindowPtr, Width, Height);
+      Renderer = new SDLRenderer(sdlWindowPtr);
     }
     public virtual void OnQuit() { }
     public virtual void OnPaint() { Renderer.Draw(); }
