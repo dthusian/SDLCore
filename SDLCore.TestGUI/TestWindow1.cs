@@ -30,11 +30,11 @@ namespace SDLCore.TestGUI
 
     public override void OnKeyDown(KeyAction key)
     {
-      Console.WriteLine("KeyDown: {0} {1}", key.Key, key.Flags);
+      Console.WriteLine("KeyDown: {0} {1} {2}", key.Key, key.Flags, key.Repeat);
     }
     public override void OnKeyUp(KeyAction key)
     {
-      Console.WriteLine("KeyDown: {0} {1}", key.Key, key.Flags);
+      Console.WriteLine("KeyUp: {0} {1}", key.Key, key.Flags);
     }
     public override void OnMouseMove(int x, int y, int xv, int yv)
     {

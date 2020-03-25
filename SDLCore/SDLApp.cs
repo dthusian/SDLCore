@@ -100,10 +100,6 @@ namespace SDLCore
             case SDL.SDL_EventType.SDL_TEXTEDITING:
               {
                 windows[e.edit.windowID].OnTextEdit(new TextEditingAction(e.edit));
-                unsafe
-                {
-                  ExtraSDLBindings.SDL_free(new IntPtr(e.edit.text));
-                }
                 break;
               }
             case SDL.SDL_EventType.SDL_TEXTINPUT:
@@ -111,7 +107,6 @@ namespace SDLCore
                 unsafe
                 {
                   windows[e.text.windowID].OnTextInput(SDLUtil.NullTerminatedUTF8String(new IntPtr(e.text.text)));
-                  ExtraSDLBindings.SDL_free(new IntPtr(e.text.text));
                 }
                 break;
               }

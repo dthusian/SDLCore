@@ -8,7 +8,7 @@ namespace SDLCore
   internal class ExtraSDLBindings
   {
     // We need this for some SDL functions
-    [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("SDL2-2.0", CallingConvention = CallingConvention.Cdecl)]
     public static extern void SDL_free(IntPtr ptr);
   }
 }

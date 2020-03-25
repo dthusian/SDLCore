@@ -18,15 +18,17 @@ namespace SDLCore.EventArgs
   {
     public string Key { get; private set; }
     public KeyFlags Flags { get; private set; }
+    public bool Repeat { get; private set; }
     internal KeyAction(SDL.SDL_KeyboardEvent ev) {
       SDL.SDL_Keymod modifiers = ev.keysym.mod;
       KeyFlags cflags = KeyFlags.Null;
-      if (modifiers.HasFlag(SDL.SDL_Keymod.KMOD_SHIFT)) cflags |= KeyFlags.Shift;
-      if (modifiers.HasFlag(SDL.SDL_Keymod.KMOD_ALT)) cflags |= KeyFlags.Alt;
-      if (modifiers.HasFlag(SDL.SDL_Keymod.KMOD_CTRL)) cflags |= KeyFlags.Ctrl;
-      if (modifiers.HasFlag(SDL.SDL_Keymod.KMOD_CAPS)) cflags |= KeyFlags.CapsLock;
+      if ((modifiers & SDL.SDL_Keymod.KMOD_SHIFT) != 0) cflags |= KeyFlags.Shift;
+      if ((modifiers & SDL.SDL_Keymod.KMOD_ALT) != 0) cflags |= KeyFlags.Alt;
+      if ((modifiers & SDL.SDL_Keymod.KMOD_CTRL) != 0) cflags |= KeyFlags.Ctrl;
+      if ((modifiers & SDL.SDL_Keymod.KMOD_CAPS) != 0) cflags |= KeyFlags.CapsLock;
       Flags = cflags;
       Key = MapSDLKeycode(ev.keysym.sym);
+      Repeat = ev.repeat != 0;
     }
 
     internal static string MapSDLKeycode(SDL.SDL_Keycode key) {

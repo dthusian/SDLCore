@@ -15,6 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="SDL2-2.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="SDL2-CS.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
