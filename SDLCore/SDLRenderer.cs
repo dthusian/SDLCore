@@ -15,7 +15,7 @@ namespace SDLCore
     IntPtr sdlTexturePtr;
     Bitmap bitmap;
     Graphics gdiRendering;
-    internal SDLRenderer(IntPtr windowPtr, int width = -1, int height = -1)
+    internal SDLRenderer(IntPtr windowPtr)
     {
       sdlRendererPtr = SDL.SDL_CreateRenderer(windowPtr, -1, 0);
       if (sdlRendererPtr == IntPtr.Zero)
@@ -23,21 +23,9 @@ namespace SDLCore
         throw new SDLException(string.Format("Failed to create renderer. Error: {0}", SDL.SDL_GetError()));
       }
       int w, h;
-      if(width == -1 || height == -1)
+      if (SDL.SDL_GetRendererOutputSize(sdlRendererPtr, out w, out h) != 0)
       {
-        if(SDL.SDL_GetRendererOutputSize(sdlRendererPtr, out w, out h) != 0)
-        {
-          throw new SDLException(string.Format("Failed to initialize render output size. Error: {0}", SDL.SDL_GetError()));
-        }
-      }
-      else
-      {
-        w = width;
-        h = height;
-        if(SDL.SDL_RenderSetLogicalSize(sdlRendererPtr, w, h) != 0)
-        {
-          throw new SDLException(string.Format("Failed to initialize render output size. Error: {0}", SDL.SDL_GetError()));
-        }
+        throw new SDLException(string.Format("Failed to initialize render output size. Error: {0}", SDL.SDL_GetError()));
       }
       bitmap = new Bitmap(w, h);
       Width = w;
@@ -45,17 +33,29 @@ namespace SDLCore
       gdiRendering = Graphics.FromImage(bitmap);
       sdlTexturePtr = SDL.SDL_CreateTexture(sdlRendererPtr, SDL.SDL_PIXELFORMAT_ARGB8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, w, h);
     }
+    public void Resize()
+    {
+      // We need to realloc the bitmaps, graphics, and texture
+      // First get the render output size
+      int w, h;
+      if (SDL.SDL_GetRendererOutputSize(sdlRendererPtr, out w, out h) != 0)
+      {
+        throw new SDLException(string.Format("Failed to get render output size. Error: {0}", SDL.SDL_GetError()));
+      }
+      SDL.SDL_DestroyTexture(sdlTexturePtr);
+      gdiRendering.Dispose();
+    }
     public void Draw()
     {
       // Graphics already renders to bitmap
       // Bitmap -> SDL_Texture
       BitmapData dat = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-      if(SDL.SDL_UpdateTexture(sdlTexturePtr, IntPtr.Zero, dat.Scan0, dat.Stride) != 0)
+      if (SDL.SDL_UpdateTexture(sdlTexturePtr, IntPtr.Zero, dat.Scan0, dat.Stride) != 0)
       {
         throw new SDLException(string.Format("Failed to render. Error: {0}", SDL.SDL_GetError()));
       }
       // SDL_Texture -> SDL_Renderer
-      if(SDL.SDL_RenderCopy(sdlRendererPtr, sdlTexturePtr, IntPtr.Zero, IntPtr.Zero) != 0)
+      if (SDL.SDL_RenderCopy(sdlRendererPtr, sdlTexturePtr, IntPtr.Zero, IntPtr.Zero) != 0)
       {
         throw new SDLException(string.Format("Failed to render. Error: {0}", SDL.SDL_GetError()));
       }
@@ -68,8 +68,12 @@ namespace SDLCore
     {
       return sdlRendererPtr;
     }
-    public void Dispose() {
+    public void Dispose()
+    {
       SDL.SDL_DestroyRenderer(sdlRendererPtr);
+      SDL.SDL_DestroyTexture(sdlTexturePtr);
+      bitmap.Dispose();
+      gdiRendering.Dispose();
     }
     public Graphics GetGDIRenderer()
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SDL2;
+using SDLCore.EventArgs;
 
 namespace SDLCore
 {
@@ -32,12 +33,15 @@ namespace SDLCore
   }
   public abstract class SDLWindow : ISDLHandle
   {
+    // Fields/Properties
     public int Width { get; private set; }
     public int Height { get; private set; }
     IntPtr sdlWindowPtr;
     protected SDLRenderer Renderer;
     public const int WindowPosCentered = SDL.SDL_WINDOWPOS_CENTERED;
     public const int WindowPosArbitrary = SDL.SDL_WINDOWPOS_UNDEFINED;
+
+    // Constructors
     protected SDLWindow(string title, int x, int y, int w, int h, WindowFlags flags) {
       sdlWindowPtr = SDL.SDL_CreateWindow(title, x, y, w, h, (SDL.SDL_WindowFlags)flags);
       if(sdlWindowPtr == IntPtr.Zero)
@@ -49,11 +53,36 @@ namespace SDLCore
       Height = h;
       Renderer = new SDLRenderer(sdlWindowPtr);
     }
+
+    // Events
     public virtual void OnQuit() { }
     public virtual void OnPaint() { Renderer.Draw(); }
-    public virtual void OnMouseDown(int x, int y) { }
-    public virtual void OnMouseUp(int x, int y) { }
+    public virtual void OnMouseDown(MouseAction action) { }
+    public virtual void OnMouseUp(MouseAction action) { }
+    public virtual void OnMouseMove(int x, int y, int xv, int yv) { }
     public virtual void OnKeyDown(KeyAction key) { }
+    public virtual void OnKeyUp(KeyAction key) { }
+    public virtual void OnBeginDrop() { }
+    public virtual void OnEndDrop() { }
+    public virtual void OnDataDrop(DataDrop data) { }
+    public virtual void OnTextEdit(TextEditingAction edit) { }
+    public virtual void OnTextInput(string data) { EndTextInput(); }
+    // Text Input
+    public void StartTextInput()
+    {
+      SDL.SDL_StartTextInput();
+    }
+    public void EndTextInput()
+    {
+      SDL.SDL_StopTextInput();
+    }
+    public bool IsInputtingText()
+    {
+      // Note to SDL devs: You really don't have to add your own bool type.
+      // Just typedef it to an int or something and declare SDL_FALSE = 0 and SDL_TRUE = 1
+      return SDL.SDL_IsTextInputActive() == SDL.SDL_bool.SDL_TRUE;
+    }
+    // Interface
     public IntPtr GetPointer()
     {
       return sdlWindowPtr;
@@ -61,6 +90,7 @@ namespace SDLCore
     public void Dispose()
     {
       SDL.SDL_DestroyWindow(sdlWindowPtr);
+      Renderer.Dispose();
     }
   }
 }

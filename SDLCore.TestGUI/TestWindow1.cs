@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using SDLCore.EventArgs;
 
 namespace SDLCore.TestGUI
 {
@@ -15,20 +16,49 @@ namespace SDLCore.TestGUI
     }
 
     public override void OnPaint() {
-      Graphics graphics = Renderer.GetGDIRenderer();
-      graphics.Clear(Color.FromArgb(255, 255, 255));
-      SolidBrush brush = new SolidBrush(Color.FromArgb(255, 0, 0));
-      graphics.FillEllipse(brush, 25, 25, 25, 25);
-      graphics.Flush();
       Renderer.Draw();
       NumPaints++;
       if(NumPaints == 600)
       {
         DateTime ProfileEnd = DateTime.Now;
         NumPaints = 0;
-        Console.WriteLine(ProfileEnd - ProfileStart);
+        double mspframe = ((ProfileEnd - ProfileStart) / 600).TotalMilliseconds;
+        Console.WriteLine("{0} ms - {1} fps", mspframe, Math.Floor(1000 / mspframe));
         ProfileStart = DateTime.Now;
       }
+    }
+
+    public override void OnKeyDown(KeyAction key)
+    {
+      Console.WriteLine("KeyDown: {0} {1}", key.Key, key.Flags);
+    }
+    public override void OnKeyUp(KeyAction key)
+    {
+      Console.WriteLine("KeyDown: {0} {1}", key.Key, key.Flags);
+    }
+    public override void OnMouseMove(int x, int y, int xv, int yv)
+    {
+      Console.WriteLine("MouseMove: {0} {1} {2} {3}", x, y, xv, yv);
+    }
+    public override void OnMouseDown(MouseAction action)
+    {
+      Console.WriteLine("MouseDown: {0} {1} {2} {3}", action.MouseX, action.MouseY, action.Button, action.NumClicks);
+    }
+    public override void OnMouseUp(MouseAction action)
+    {
+      Console.WriteLine("MouseUp: {0} {1} {2} {3}", action.MouseX, action.MouseY, action.Button, action.NumClicks);
+    }
+    public override void OnBeginDrop()
+    {
+      Console.WriteLine("BeginDrop");
+    }
+    public override void OnEndDrop()
+    {
+      Console.WriteLine("EndDrop");
+    }
+    public override void OnDataDrop(DataDrop data)
+    {
+      Console.WriteLine("DataDrop: {0} {1}", data.IsFile, data.Data);
     }
   }
 }
