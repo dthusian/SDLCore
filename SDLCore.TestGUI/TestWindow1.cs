@@ -8,29 +8,38 @@ namespace SDLCore.TestGUI
 {
   class TestWindow1 : SDLWindow
   {
-    public int NumPaints = 0;
-    public DateTime ProfileStart;
-    public TestWindow1() : base("SDLCore Test Window 1", WindowPosCentered, WindowPosCentered, 800, 450, 0)
+    List<SDLCursor> systemcursors;
+    int cursorIndex;
+    public TestWindow1() : base("SDLCore Debug Window", WindowPosCentered, WindowPosCentered, 800, 450, 0)
     {
-      ProfileStart = DateTime.Now;
+      systemcursors = new List<SDLCursor> {
+        new SDLCursor(SystemCursor.Arrow),
+        new SDLCursor(SystemCursor.Crosshair),
+        new SDLCursor(SystemCursor.DoubleArrowHorizontal),
+        new SDLCursor(SystemCursor.DoubleArrowHorizontal),
+        new SDLCursor(SystemCursor.DoubleArrowNSlope),
+        new SDLCursor(SystemCursor.DoubleArrowPSlope),
+        new SDLCursor(SystemCursor.DoubleArrowVertical),
+        new SDLCursor(SystemCursor.Hand),
+        new SDLCursor(SystemCursor.IBeam),
+        new SDLCursor(SystemCursor.No),
+        new SDLCursor(SystemCursor.QuadArrow),
+        new SDLCursor(SystemCursor.Wait),
+        new SDLCursor(SystemCursor.WaitArrow)
+      };
+      cursorIndex = -1;
     }
 
     public override void OnPaint() {
       Renderer.Draw();
-      NumPaints++;
-      if(NumPaints == 600)
-      {
-        DateTime ProfileEnd = DateTime.Now;
-        NumPaints = 0;
-        double mspframe = ((ProfileEnd - ProfileStart) / 600).TotalMilliseconds;
-        Console.WriteLine("{0} ms - {1} fps", mspframe, Math.Floor(1000 / mspframe));
-        ProfileStart = DateTime.Now;
-      }
     }
 
     public override void OnKeyDown(KeyAction key)
     {
       Console.WriteLine("KeyDown: {0} {1} {2}", key.Key, key.Flags, key.Repeat);
+      cursorIndex++;
+      cursorIndex %= systemcursors.Count;
+      systemcursors[cursorIndex].SetCursor();
     }
     public override void OnKeyUp(KeyAction key)
     {

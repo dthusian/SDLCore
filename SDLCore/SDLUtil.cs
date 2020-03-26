@@ -6,9 +6,9 @@ using SDL2;
 
 namespace SDLCore
 {
-  internal class SDLUtil
+  public class SDLUtil
   {
-    public static string NullTerminatedUTF8String(IntPtr ptr)
+    internal static string NullTerminatedUTF8String(IntPtr ptr)
     {
       unsafe
       {
@@ -20,9 +20,20 @@ namespace SDLCore
         return Encoding.UTF8.GetString(buf);
       }
     }
-    public static bool ToBool(SDL.SDL_bool v)
+    internal static bool ToBool(SDL.SDL_bool v)
     {
       return v == SDL.SDL_bool.SDL_TRUE;
+    }
+    public static string GetClipboard()
+    {
+      return SDL.SDL_GetClipboardText();
+    }
+    public static void SetClipboard(string text)
+    {
+      if(SDL.SDL_SetClipboardText(text) != 0)
+      {
+        throw new SDLException("Failed to set clipboard. Error: {0}");
+      }
     }
   }
 }

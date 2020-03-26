@@ -29,6 +29,13 @@ namespace SDLCore
     public int RAMSizeMB { get; private set; }
     public CPUFeatures ProcessorFeatures { get; private set; }
     public int PowerLeftPercentage { get; private set; }
+    public int PowerLeftSeconds { get; private set; }
+    public double HorizontalDPI { get; private set; }
+    public double VerticalDPI { get; private set; }
+    public double DiagonalDPI { get; private set; }
+    internal int VideoDriverIndex { get; private set; }
+    public string CurrentVideoDriver { get; private set; }
+    public string[] InstalledVideoDrivers { get; private set; }
     public SystemInfo()
     {
       CPUCacheSize = SDL.SDL_GetCPUCacheLineSize();
@@ -47,11 +54,34 @@ namespace SDLCore
       if (SDLUtil.ToBool(SDL.SDL_HasSSE42())) feat |= CPUFeatures.HasSSE42;
       ProcessorFeatures = feat;
       UpdatePowerInfo();
+      // Find current display driver index
+      VideoDriverIndex = -1;
+      CurrentVideoDriver = SDL.SDL_GetCurrentVideoDriver();
+      List<string> tmpVideoDrivers = new List<string>();
+      for(int i = 0; i < SDL.SDL_GetNumVideoDrivers(); i++)
+      {
+        string cVidDri = SDL.SDL_GetVideoDriver(i);
+        if (cVidDri == CurrentVideoDriver)
+        {
+          VideoDriverIndex = i;
+        }
+        tmpVideoDrivers.Add(cVidDri);
+      }
+      InstalledVideoDrivers = tmpVideoDrivers.ToArray();
+      // DPI
+      if (SDL.SDL_GetDisplayDPI(VideoDriverIndex, out float ddpi, out float hdpi, out float vdpi) == 0)
+      {
+        HorizontalDPI = hdpi;
+        VerticalDPI = vdpi;
+        DiagonalDPI = ddpi;
+      }
     }
-    public void UpdatePowerInfo() {
-      int powerLeft;
-      SDL.SDL_GetPowerInfo(out int _, out powerLeft);
+    public void UpdatePowerInfo()
+    {
+      int powerLeft, powerSeconds;
+      SDL.SDL_GetPowerInfo(out powerSeconds, out powerLeft);
       PowerLeftPercentage = powerLeft;
+      PowerLeftSeconds = powerSeconds;
     }
   }
 }

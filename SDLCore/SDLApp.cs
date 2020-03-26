@@ -118,7 +118,6 @@ namespace SDLCore
         }
       }
     }
-
     public void Dispose()
     {
       SDL.SDL_Quit();
