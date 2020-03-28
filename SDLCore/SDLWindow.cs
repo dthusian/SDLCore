@@ -46,7 +46,7 @@ namespace SDLCore
       sdlWindowPtr = SDL.SDL_CreateWindow(title, x, y, w, h, (SDL.SDL_WindowFlags)flags);
       if(sdlWindowPtr == IntPtr.Zero)
       {
-        throw new SDLException(string.Format("Failed to create window. Error: {0}", SDL.SDL_GetError()));
+        throw new SDLException();
       }
       SDL.SDL_ShowWindow(sdlWindowPtr);
       Width = w;

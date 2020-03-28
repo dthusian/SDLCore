@@ -9,9 +9,9 @@ namespace SDLCore
   [Serializable]
   public class SDLException : ApplicationException
   {
-    public SDLException() { }
-    public SDLException(string message) : base(string.Format(message, SDL.SDL_GetError())) { }
-    public SDLException(string message, Exception inner) : base(string.Format(message, SDL.SDL_GetError()), inner) { }
+    public SDLException() : base(SDL.SDL_GetError()) { }
+    public SDLException(string message) : base(message) { }
+    public SDLException(string message, Exception inner) : base(message, inner) { }
     protected SDLException(
     System.Runtime.Serialization.SerializationInfo info,
     System.Runtime.Serialization.StreamingContext context) : base(info, context) { }

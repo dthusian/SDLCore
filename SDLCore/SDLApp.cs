@@ -13,7 +13,7 @@ namespace SDLCore
     {
       if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO | SDL.SDL_INIT_AUDIO) != 0)
       {
-        throw new SDLException("Failed to initialize subsystems. Error: {0}");
+        throw new SDLException();
       }
       SDL.SDL_SetHint(SDL.SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
       windows = new Dictionary<uint, SDLWindow>();
@@ -22,7 +22,7 @@ namespace SDLCore
     public void RegisterWindow(SDLWindow window)
     {
       uint windowID = SDL.SDL_GetWindowID(window.GetPointer());
-      if (windowID == 0) throw new SDLException("Failed to register window. Error: {0}");
+      if (windowID == 0) throw new SDLException();
       windows.Add(windowID, window);
     }
 

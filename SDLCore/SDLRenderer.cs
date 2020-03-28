@@ -20,12 +20,12 @@ namespace SDLCore
       sdlRendererPtr = SDL.SDL_CreateRenderer(windowPtr, -1, 0);
       if (sdlRendererPtr == IntPtr.Zero)
       {
-        throw new SDLException(string.Format("Failed to create renderer. Error: {0}", SDL.SDL_GetError()));
+        throw new SDLException();
       }
       int w, h;
       if (SDL.SDL_GetRendererOutputSize(sdlRendererPtr, out w, out h) != 0)
       {
-        throw new SDLException(string.Format("Failed to initialize render output size. Error: {0}", SDL.SDL_GetError()));
+        throw new SDLException();
       }
       bitmap = new Bitmap(w, h);
       Width = w;
@@ -40,7 +40,7 @@ namespace SDLCore
       int w, h;
       if (SDL.SDL_GetRendererOutputSize(sdlRendererPtr, out w, out h) != 0)
       {
-        throw new SDLException(string.Format("Failed to get render output size. Error: {0}", SDL.SDL_GetError()));
+        throw new SDLException();
       }
       SDL.SDL_DestroyTexture(sdlTexturePtr);
       gdiRendering.Dispose();
@@ -52,12 +52,12 @@ namespace SDLCore
       BitmapData dat = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
       if (SDL.SDL_UpdateTexture(sdlTexturePtr, IntPtr.Zero, dat.Scan0, dat.Stride) != 0)
       {
-        throw new SDLException(string.Format("Failed to render. Error: {0}", SDL.SDL_GetError()));
+        throw new SDLException();
       }
       // SDL_Texture -> SDL_Renderer
       if (SDL.SDL_RenderCopy(sdlRendererPtr, sdlTexturePtr, IntPtr.Zero, IntPtr.Zero) != 0)
       {
-        throw new SDLException(string.Format("Failed to render. Error: {0}", SDL.SDL_GetError()));
+        throw new SDLException();
       }
       // Render the renderer
       SDL.SDL_RenderPresent(sdlRendererPtr);

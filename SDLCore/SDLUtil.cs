@@ -32,7 +32,7 @@ namespace SDLCore
     {
       if(SDL.SDL_SetClipboardText(text) != 0)
       {
-        throw new SDLException("Failed to set clipboard. Error: {0}");
+        throw new SDLException();
       }
     }
   }

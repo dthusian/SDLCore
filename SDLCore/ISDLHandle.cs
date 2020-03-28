@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SDLCore
 {
-  internal interface ISDLHandle : IDisposable
+  public interface ISDLHandle : IDisposable
   {
     IntPtr GetPointer();
   }

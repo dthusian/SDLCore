@@ -39,14 +39,14 @@ namespace SDLCore
       }
       data.buttons = buttonStructs;
       if (SDL.SDL_ShowMessageBox(ref data, out int btnClicked) != 0) {
-        throw new SDLException("Failed to show message box. Error {0}");
+        throw new SDLException();
       }
       return btnClicked;
     }
     public static void ShowMessageBox(MessageBoxFlags flags, string title, string message) {
       if(SDL.SDL_ShowSimpleMessageBox((SDL.SDL_MessageBoxFlags)flags, title, message, IntPtr.Zero) != 0)
       {
-        throw new SDLException("Failed to show message box. Error: {0}");
+        throw new SDLException();
       }
     }
   }
