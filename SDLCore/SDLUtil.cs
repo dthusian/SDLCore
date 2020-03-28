@@ -6,6 +6,9 @@ using SDL2;
 
 namespace SDLCore
 {
+  /// <summary>
+  /// Contains general utility methods for SDL
+  /// </summary>
   public class SDLUtil
   {
     internal static string NullTerminatedUTF8String(IntPtr ptr)
@@ -24,10 +27,18 @@ namespace SDLCore
     {
       return v == SDL.SDL_bool.SDL_TRUE;
     }
+    /// <summary>
+    /// Gets the current text on the clipboard.
+    /// </summary>
+    /// <returns></returns>
     public static string GetClipboard()
     {
       return SDL.SDL_GetClipboardText();
     }
+    /// <summary>
+    /// Sets the current text on the clipboard.
+    /// </summary>
+    /// <param name="text"></param>
     public static void SetClipboard(string text)
     {
       if(SDL.SDL_SetClipboardText(text) != 0)

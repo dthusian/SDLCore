@@ -5,7 +5,13 @@ using SDL2;
 
 namespace SDLCore
 {
-
+  /// <summary>
+  /// The exception that is thrown when an SDL function fails.
+  /// </summary>
+  /// <remarks>
+  /// Often, the exception message is a string returned by SDL_GetError(),
+  /// so it is possible to find documentation for that error message.
+  /// </remarks>
   [Serializable]
   public class SDLException : ApplicationException
   {

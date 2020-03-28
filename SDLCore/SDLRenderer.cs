@@ -5,6 +5,19 @@ using SDL2;
 
 namespace SDLCore
 {
+  /// <summary>
+  /// Encapsulates an SDL renderer.
+  /// </summary>
+  /// <remarks>
+  /// An SDL renderer renders drawing commands to the screen,
+  /// but due to the lack of 2D primitive support, and the
+  /// fact the SDL_gfx is a software renderer, drawing commands
+  /// are actually rendered with System.Drawing.Graphics.
+  /// GetGDIRenderer() returns a Graphics object that you can
+  /// use to draw 2D primitives to the screen. For exact details
+  /// about how the rendering works, check the remarks section
+  /// of the Draw() method.
+  /// </remarks>
   public class SDLRenderer : ISDLHandle
   {
     public int Width { get; private set; }
@@ -15,6 +28,11 @@ namespace SDLCore
     IntPtr sdlTexturePtr;
     Bitmap bitmap;
     Graphics gdiRendering;
+    /// <summary>
+    /// [Internal] Constructs an SDLRenderer from an SDL window.
+    /// This constructor should only be called from an SDLWindow.
+    /// </summary>
+    /// <param name="windowPtr"></param>
     internal SDLRenderer(IntPtr windowPtr)
     {
       sdlRendererPtr = SDL.SDL_CreateRenderer(windowPtr, -1, 0);
@@ -33,6 +51,9 @@ namespace SDLCore
       gdiRendering = Graphics.FromImage(bitmap);
       sdlTexturePtr = SDL.SDL_CreateTexture(sdlRendererPtr, SDL.SDL_PIXELFORMAT_ARGB8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, w, h);
     }
+    /// <summary>
+    /// Resizes the renderer, if its size has changed.
+    /// </summary>
     public void Resize()
     {
       // We need to realloc the bitmaps, graphics, and texture
@@ -44,7 +65,27 @@ namespace SDLCore
       }
       SDL.SDL_DestroyTexture(sdlTexturePtr);
       gdiRendering.Dispose();
+      bitmap.Dispose();
+      bitmap = new Bitmap(w, h);
+      gdiRendering = Graphics.FromImage(bitmap);
+      sdlTexturePtr = SDL.SDL_CreateTexture(sdlRendererPtr, SDL.SDL_PIXELFORMAT_ABGR8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, w, h);
     }
+    /// <summary>
+    /// Draws the rendering to the screen.
+    /// </summary>
+    /// <remarks>
+    /// SDLRenderers internally manage a Bitmap, a Graphics, and two IntPtrs
+    /// (one SDL_Texture, and one SDL_Renderer). The graphics object is returned
+    /// for the user to draw on. The Bitmap is the target of the Graphics returned.
+    /// When Draw() is called, LockBits() is called on the Bitmap to access the raw
+    /// pixel data. This pixel data is passed into SDL_UpdateTexture to copy the
+    /// data into the texture. Then the texture is rendered. The pixels are copied
+    /// about 3 times each frame, but with block-copy implementations, it shouldn't
+    /// be too much of a performance issue.
+    /// 
+    /// Because the Bitmap is copied into a texture before rendering, flicker
+    /// should not be an issue either.
+    /// </remarks>
     public void Draw()
     {
       // Graphics already renders to bitmap
@@ -75,6 +116,10 @@ namespace SDLCore
       bitmap.Dispose();
       gdiRendering.Dispose();
     }
+    /// <summary>
+    /// Gets a graphics object that can be used to render 2D primives.
+    /// </summary>
+    /// <returns></returns>
     public Graphics GetGDIRenderer()
     {
       return gdiRendering;

@@ -31,6 +31,14 @@ namespace SDLCore
     Utility = SDL.SDL_WindowFlags.SDL_WINDOW_UTILITY,
     Vulkan = SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN
   }
+  /// <summary>
+  /// Represents a window created with SDL.
+  /// </summary>
+  /// <remarks>
+  /// To use this class, you should inherit it, and then
+  /// construct an instance of your inherited window, and
+  /// register it with an SDLApp.
+  /// </remarks>
   public abstract class SDLWindow : ISDLHandle
   {
     // Fields/Properties
@@ -41,7 +49,27 @@ namespace SDLCore
     public const int WindowPosCentered = SDL.SDL_WINDOWPOS_CENTERED;
     public const int WindowPosArbitrary = SDL.SDL_WINDOWPOS_UNDEFINED;
 
-    // Constructors
+    /// <summary>
+    /// To be used in a derived class.
+    /// </summary>
+    /// <param name="title">
+    /// The title of the window.
+    /// </param>
+    /// <param name="x">
+    /// The X position where to place the window. Pass in WindowPosCentered to center the window.
+    /// </param>
+    /// <param name="y">
+    /// The Y position where to place the window. Pass in WindowPosCentered to center the window.
+    /// </param>
+    /// <param name="w">
+    /// The width of the window. Graphics and and rendering will be set to these dimensions.
+    /// </param>
+    /// <param name="h">
+    /// The height of the window. Graphics and and rendering will be set to these dimensions.
+    /// </param>
+    /// <param name="flags">
+    /// Options about a window.
+    /// </param>
     protected SDLWindow(string title, int x, int y, int w, int h, WindowFlags flags) {
       sdlWindowPtr = SDL.SDL_CreateWindow(title, x, y, w, h, (SDL.SDL_WindowFlags)flags);
       if(sdlWindowPtr == IntPtr.Zero)
@@ -54,24 +82,94 @@ namespace SDLCore
       Renderer = new SDLRenderer(sdlWindowPtr);
     }
 
-    // Events
+    /// <summary>
+    /// Fired when the application is about to quit.
+    /// </summary>
     public virtual void OnQuit() { }
+    /// <summary>
+    /// Fired when the window needs to be painted.
+    /// </summary>
+    /// <remarks>
+    /// Usually, you should call Renderer.Draw() in this function.
+    /// </remarks>
     public virtual void OnPaint() { Renderer.Draw(); }
+    /// <summary>
+    /// Fired once when the mouse is clicked downwards.
+    /// </summary>
+    /// <param name="action">
+    /// Information about the mouse click.
+    /// </param>
     public virtual void OnMouseDown(MouseAction action) { }
+    /// <summary>
+    /// Fired once when the mouse is released from a clicked state.
+    /// </summary>
+    /// <param name="action">
+    /// Information about the mouse click.
+    /// </param>
     public virtual void OnMouseUp(MouseAction action) { }
+    /// <summary>
+    /// Fired when the mouse moves. It may be fired many times
+    /// across the motion of the mouse.
+    /// </summary>
+    /// <param name="x">
+    /// The new X-position of the mouse (relative to the upper-left corner of the window)
+    /// </param>
+    /// <param name="y">
+    /// The new Y-position of the mouse (relative to the upper-left corner of the window)
+    /// </param>
+    /// <param name="xv">
+    /// The X-position of the mouse relative to the last message (how much the mouse moved)
+    /// </param>
+    /// <param name="yv">
+    /// The Y-position of the mouse relative to the last message (how much the mouse moved)
+    /// </param>
     public virtual void OnMouseMove(int x, int y, int xv, int yv) { }
+    /// <summary>
+    /// Fired once when the key is pressed, and fires mulitple times
+    /// while the key is held.
+    /// </summary>
+    /// <param name="key"></param>
     public virtual void OnKeyDown(KeyAction key) { }
+    /// <summary>
+    /// Fired once when the key is released.
+    /// </summary>
+    /// <param name="key"></param>
     public virtual void OnKeyUp(KeyAction key) { }
+    /// <summary>
+    /// Fired when a user has begun to hover over the window with
+    /// content that can be dropped.
+    /// </summary>
     public virtual void OnBeginDrop() { }
+    /// <summary>
+    /// Fired when a user stops hovering over the window with
+    /// content.
+    /// </summary>
     public virtual void OnEndDrop() { }
+    /// <summary>
+    /// Fired when a user drops content onto the window.
+    /// </summary>
+    /// <param name="data"></param>
     public virtual void OnDataDrop(DataDrop data) { }
+    /// <summary>
+    /// Fired during a text editing action.
+    /// </summary>
+    /// <param name="edit"></param>
     public virtual void OnTextEdit(TextEditingAction edit) { }
+    /// <summary>
+    /// Fired when the text editing is committed.
+    /// </summary>
+    /// <param name="data"></param>
     public virtual void OnTextInput(string data) { EndTextInput(); }
-    // Text Input
+    /// <summary>
+    /// Starts text input. This function can be called anytime.
+    /// </summary>
     public void StartTextInput()
     {
       SDL.SDL_StartTextInput();
     }
+    /// <summary>
+    /// Ends text input.
+    /// </summary>
     public void EndTextInput()
     {
       SDL.SDL_StopTextInput();

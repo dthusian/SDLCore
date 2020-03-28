@@ -17,25 +17,68 @@ namespace SDLCore
     HasRDTSC = 0x20,
     HasSSE = 0x40,
     HasSSE2 = 0x80,
-    HasSSE3 = 0x10,
-    HasSSE41 = 0x20,
-    HasSSE42 = 0x40
+    HasSSE3 = 0x100,
+    HasSSE41 = 0x200,
+    HasSSE42 = 0x400
   }
-  // Note: This class will only contain information not obtainable in
-  // System.Environment class, and obtainable via SDL methods
+  /// <summary>
+  /// Information about the system.
+  /// </summary>
+  /// <remarks>
+  /// This class only contains information not viewable in System.Environment.
+  /// </remarks>
   public class SystemInfo
   {
+    /// <summary>
+    /// The size, in bytes of the CPU's L1 cache
+    /// </summary>
     public int CPUCacheSize { get; private set; }
+    /// <summary>
+    /// The size, in megabytes, of the RAM (random access memory)
+    /// </summary>
     public int RAMSizeMB { get; private set; }
+    /// <summary>
+    /// The CPU features supported.
+    /// </summary>
     public CPUFeatures ProcessorFeatures { get; private set; }
+    /// <summary>
+    /// The amount of power left in the system battery, as a percentage
+    /// May return -1 if there is no system battery.
+    /// </summary>
     public int PowerLeftPercentage { get; private set; }
+    /// <summary>
+    /// The amount of power left in the system battery, as an estimated
+    /// time until empty. May return -1 if the system does not report
+    /// this value
+    /// </summary>
     public int PowerLeftSeconds { get; private set; }
+    /// <summary>
+    /// The DPI (dots per inch) horizontally
+    /// </summary>
     public double HorizontalDPI { get; private set; }
+    /// <summary>
+    /// The DPI (dots per inch) vertically
+    /// </summary>
     public double VerticalDPI { get; private set; }
+    /// <summary>
+    /// The DPI (dots per inch) diagonally
+    /// </summary>
     public double DiagonalDPI { get; private set; }
+    /// <summary>
+    /// [Internal] The index of video driver currently used
+    /// </summary>
     internal int VideoDriverIndex { get; private set; }
+    /// <summary>
+    /// The name of the current video driver.
+    /// </summary>
     public string CurrentVideoDriver { get; private set; }
+    /// <summary>
+    /// A list of names of possible video drivers that are installed.
+    /// </summary>
     public string[] InstalledVideoDrivers { get; private set; }
+    /// <summary>
+    /// Retrieves system info and stores it in this class
+    /// </summary>
     public SystemInfo()
     {
       CPUCacheSize = SDL.SDL_GetCPUCacheLineSize();
@@ -76,6 +119,10 @@ namespace SDLCore
         DiagonalDPI = ddpi;
       }
     }
+    /// <summary>
+    /// Updates the power info, as that may likely change over
+    /// program execution.
+    /// </summary>
     public void UpdatePowerInfo()
     {
       int powerLeft, powerSeconds;

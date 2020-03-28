@@ -6,9 +6,21 @@ using SDLCore.EventArgs;
 
 namespace SDLCore
 {
+  /// <summary>
+  /// The basic object representing an application that uses SDL.
+  /// </summary>
+  /// <remarks>
+  /// Its constructors run SDL_Init and similar functions to initialize SDL.
+  /// Its Dispose() method runs SDL_Quit, so you should only create
+  /// one of this object for the lifetime of your application.
+  /// </remarks>
   public class SDLApp
   {
     private Dictionary<uint, SDLWindow> windows;
+    /// <summary>
+    /// Constructor. Runs SDL_Init to initialize SDL.
+    /// SDL_Init is called with flags to initialize video and audio.
+    /// </summary>
     public SDLApp()
     {
       if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO | SDL.SDL_INIT_AUDIO) != 0)
@@ -18,14 +30,26 @@ namespace SDLCore
       SDL.SDL_SetHint(SDL.SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
       windows = new Dictionary<uint, SDLWindow>();
     }
-
+    /// <summary>
+    /// Registers a window to recieve window events from the main application queue.
+    /// </summary>
+    /// <param name="window">
+    /// The window to register.
+    /// </param>
     public void RegisterWindow(SDLWindow window)
     {
       uint windowID = SDL.SDL_GetWindowID(window.GetPointer());
       if (windowID == 0) throw new SDLException();
       windows.Add(windowID, window);
     }
-
+    /// <summary>
+    /// Runs the main event loop.
+    /// </summary>
+    /// <remarks>
+    /// Note that this function does not return
+    /// until the SDL_QUIT message is recieved. If you want to run
+    /// a game tick loop, it should run on a separate thread.
+    /// </remarks>
     public void RunWindowLoop()
     {
       bool quit = false;
@@ -56,6 +80,7 @@ namespace SDLCore
                 ExtraSDLBindings.SDL_free(e.drop.file);
                 // Note to SDL devs (or SDL2# dev): This is not ok
                 // Either give SDL_free in SDL2# or have SDL free the pointer itself
+                // Or have the binding return a string here
                 break;
               }
             case SDL.SDL_EventType.SDL_DROPBEGIN:
@@ -118,6 +143,14 @@ namespace SDLCore
         }
       }
     }
+    /// <summary>
+    /// Disposes the SDLApp object.
+    /// </summary>
+    /// <remarks>
+    /// This function runs SDL_Quit as well as Dispose()-ing all
+    /// windows registered. You do not have to Dispose() the
+    /// windows yourself.
+    /// </remarks>
     public void Dispose()
     {
       SDL.SDL_Quit();
