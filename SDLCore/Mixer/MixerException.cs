@@ -9,7 +9,7 @@ namespace SDLCore.Mixer
   [Serializable]
   public class MixerException : SDLException
   {
-    public MixerException() : base(ExtraSDLBindings.Mix_GetError()) { }
+    public MixerException() : base() { }
     public MixerException(string message) : base(message) { }
     public MixerException(string message, Exception inner) : base(message, inner) { }
     protected MixerException(

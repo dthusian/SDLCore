@@ -21,13 +21,17 @@ namespace SDLCore
     /// Constructor. Runs SDL_Init to initialize SDL.
     /// SDL_Init is called with flags to initialize video and audio.
     /// </summary>
-    public SDLApp()
+    public SDLApp(bool debug = false)
     {
-      if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO | SDL.SDL_INIT_AUDIO) != 0)
+      if (debug)
+      {
+        SDL.SDL_SetHint(SDL.SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
+        SDL.SDL_LogSetAllPriority(SDL.SDL_LogPriority.SDL_LOG_PRIORITY_WARN);
+      }
+      if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) != 0)
       {
         throw new SDLException();
       }
-      SDL.SDL_SetHint(SDL.SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
       windows = new Dictionary<uint, SDLWindow>();
     }
     /// <summary>
@@ -38,6 +42,7 @@ namespace SDLCore
     /// </param>
     public void RegisterWindow(SDLWindow window)
     {
+      if (window == null) throw new ArgumentNullException(nameof(window));
       uint windowID = SDL.SDL_GetWindowID(window.GetPointer());
       if (windowID == 0) throw new SDLException();
       windows.Add(windowID, window);
@@ -52,95 +57,102 @@ namespace SDLCore
     /// </remarks>
     public void RunWindowLoop()
     {
-      bool quit = false;
-      while (!quit)
+      try
       {
-        SDL.SDL_Event e;
-        if (SDL.SDL_PollEvent(out e) != 0)
+        bool quit = false;
+        while (!quit)
         {
-          switch (e.type)
+          SDL.SDL_Event e;
+          if (SDL.SDL_PollEvent(out e) != 0)
           {
-            // Quit
-            case SDL.SDL_EventType.SDL_QUIT:
-              {
-                foreach (var wnd in windows)
+            switch (e.type)
+            {
+              // Quit
+              case SDL.SDL_EventType.SDL_QUIT:
                 {
-                  wnd.Value.OnQuit();
+                  foreach (var wnd in windows)
+                  {
+                    wnd.Value.OnQuit();
+                  }
+                  quit = true;
+                  break;
                 }
-                quit = true;
-                break;
-              }
-            // File dropping
-            case SDL.SDL_EventType.SDL_DROPFILE:
-            case SDL.SDL_EventType.SDL_DROPTEXT:
-              {
-                string data = SDLUtil.NullTerminatedUTF8String(e.drop.file);
-                DataDrop drop = new DataDrop(e.type == SDL.SDL_EventType.SDL_DROPFILE, data);
-                windows[e.drop.windowID].OnDataDrop(drop);
-                ExtraSDLBindings.SDL_free(e.drop.file);
-                // Note to SDL devs (or SDL2# dev): This is not ok
-                // Either give SDL_free in SDL2# or have SDL free the pointer itself
-                // Or have the binding return a string here
-                break;
-              }
-            case SDL.SDL_EventType.SDL_DROPBEGIN:
-              {
-                windows[e.drop.windowID].OnBeginDrop();
-                break;
-              }
-            case SDL.SDL_EventType.SDL_DROPCOMPLETE:
-              {
-                windows[e.drop.windowID].OnEndDrop();
-                break;
-              }
-            // Key actions
-            case SDL.SDL_EventType.SDL_KEYDOWN:
-              {
-                KeyAction action = new KeyAction(e.key);
-                windows[e.key.windowID].OnKeyDown(action);
-                break;
-              }
-            case SDL.SDL_EventType.SDL_KEYUP:
-              {
-                KeyAction action = new KeyAction(e.key);
-                windows[e.key.windowID].OnKeyUp(action);
-                break;
-              }
-            // Mouse Actions
-            case SDL.SDL_EventType.SDL_MOUSEMOTION:
-              {
-                windows[e.motion.windowID].OnMouseMove(e.motion.x, e.motion.y, e.motion.xrel, e.motion.yrel);
-                break;
-              }
-            case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
-              {
-                windows[e.button.windowID].OnMouseDown(new MouseAction(e.button));
-                break;
-              }
-            case SDL.SDL_EventType.SDL_MOUSEBUTTONUP:
-              {
-                windows[e.button.windowID].OnMouseUp(new MouseAction(e.button));
-                break;
-              }
-            case SDL.SDL_EventType.SDL_TEXTEDITING:
-              {
-                windows[e.edit.windowID].OnTextEdit(new TextEditingAction(e.edit));
-                break;
-              }
-            case SDL.SDL_EventType.SDL_TEXTINPUT:
-              {
-                unsafe
+              // File dropping
+              case SDL.SDL_EventType.SDL_DROPFILE:
+              case SDL.SDL_EventType.SDL_DROPTEXT:
                 {
-                  windows[e.text.windowID].OnTextInput(SDLUtil.NullTerminatedUTF8String(new IntPtr(e.text.text)));
+                  string data = SDLUtil.NullTerminatedUTF8String(e.drop.file);
+                  DataDrop drop = new DataDrop(e.type == SDL.SDL_EventType.SDL_DROPFILE, data);
+                  windows[e.drop.windowID].OnDataDrop(drop);
+                  ExtraSDLBindings.SDL_free(e.drop.file);
+                  // Note to SDL devs (or SDL2# dev): This is not ok
+                  // Either give SDL_free in SDL2# or have SDL free the pointer itself
+                  // Or have the binding return a string here
+                  break;
                 }
-                break;
-              }
+              case SDL.SDL_EventType.SDL_DROPBEGIN:
+                {
+                  windows[e.drop.windowID].OnBeginDrop();
+                  break;
+                }
+              case SDL.SDL_EventType.SDL_DROPCOMPLETE:
+                {
+                  windows[e.drop.windowID].OnEndDrop();
+                  break;
+                }
+              // Key actions
+              case SDL.SDL_EventType.SDL_KEYDOWN:
+                {
+                  KeyAction action = new KeyAction(e.key);
+                  windows[e.key.windowID].OnKeyDown(action);
+                  break;
+                }
+              case SDL.SDL_EventType.SDL_KEYUP:
+                {
+                  KeyAction action = new KeyAction(e.key);
+                  windows[e.key.windowID].OnKeyUp(action);
+                  break;
+                }
+              // Mouse Actions
+              case SDL.SDL_EventType.SDL_MOUSEMOTION:
+                {
+                  windows[e.motion.windowID].OnMouseMove(e.motion.x, e.motion.y, e.motion.xrel, e.motion.yrel);
+                  break;
+                }
+              case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
+                {
+                  windows[e.button.windowID].OnMouseDown(new MouseAction(e.button));
+                  break;
+                }
+              case SDL.SDL_EventType.SDL_MOUSEBUTTONUP:
+                {
+                  windows[e.button.windowID].OnMouseUp(new MouseAction(e.button));
+                  break;
+                }
+              case SDL.SDL_EventType.SDL_TEXTEDITING:
+                {
+                  windows[e.edit.windowID].OnTextEdit(new TextEditingAction(e.edit));
+                  break;
+                }
+              case SDL.SDL_EventType.SDL_TEXTINPUT:
+                {
+                  unsafe
+                  {
+                    windows[e.text.windowID].OnTextInput(SDLUtil.NullTerminatedUTF8String(new IntPtr(e.text.text)));
+                  }
+                  break;
+                }
+            }
+          }
+          foreach (var wnd in windows)
+          {
+            wnd.Value.OnPaint();
           }
         }
-        foreach (var wnd in windows)
-        {
-          wnd.Value.OnPaint();
-        }
+      }catch(Exception ex)
+      {
+        MessageBox.ShowMessageBox(MessageBoxFlags.Error, "Unhandled Exception", ex.ToString());
+        throw;
       }
     }
     /// <summary>

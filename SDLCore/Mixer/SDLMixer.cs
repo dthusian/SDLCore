@@ -24,14 +24,14 @@ namespace SDLCore.Mixer
       if (SDL.SDL_Init(SDL.SDL_INIT_AUDIO) != 0) {
         throw new SDLException();
       }
-      if(SDL_mixer.Mix_Init((SDL_mixer.MIX_InitFlags)flags) != 0)
+      if((SDL_mixer.MIX_InitFlags)SDL_mixer.Mix_Init((SDL_mixer.MIX_InitFlags)flags) != (SDL_mixer.MIX_InitFlags)flags)
       {
         throw new MixerException();
       }
       if (SDL_mixer.Mix_OpenAudio(44100, SDL.AUDIO_S16, 2, 4096) != 0) {
         throw new MixerException();
       }
-      if(SDL_mixer.Mix_AllocateChannels(numChannels) != 0)
+      if(SDL_mixer.Mix_AllocateChannels(numChannels) != numChannels)
       {
         throw new MixerException();
       }
@@ -44,7 +44,7 @@ namespace SDLCore.Mixer
       return new MixerInfo(this);
     }
     // Sound methods (for general sounds)
-    public void PlaySound(IMixerSound sound, int channel = -1)
+    public void PlaySound(IMixerSound sound, int channel = -1, bool propagateErrors = false)
     {
       int ret = -1;
       if(sound is MixerSound)
@@ -58,7 +58,7 @@ namespace SDLCore.Mixer
       {
         throw new MixerException("Cannot play unknown object");
       }
-      if(ret != 0)
+      if(propagateErrors && ret == -1)
       {
         throw new MixerException();
       }
@@ -72,14 +72,13 @@ namespace SDLCore.Mixer
       }
       else if(sound is MixerMusic)
       {
-        SDL_mixer.Mix_PlayMusic(sound.GetPointer(), -1);
-        ret = -2;
+        ret = SDL_mixer.Mix_PlayMusic(sound.GetPointer(), -1);
       }
       else
       {
         throw new MixerException("Cannot play unknown object");
       }
-      if (ret != 0)
+      if (ret == -1)
       {
         throw new MixerException();
       }
@@ -128,6 +127,9 @@ namespace SDLCore.Mixer
       {
         return SDL_mixer.Mix_Playing(channel) == 1;
       }
+    }
+    public int NumChannelsPlaying() {
+      return SDL_mixer.Mix_Playing(-1);
     }
     public bool IsPaused(int channel = -1)
     {

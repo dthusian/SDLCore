@@ -6,7 +6,7 @@ using SDL2;
 namespace SDLCore.Mixer
 {
   // Like mixer sound but only one channel and has extra functionality
-  public class MixerMusic : ISDLHandle
+  public class MixerMusic : IMixerSound
   {
     IntPtr mixerMusicPtr;
     public MixerMusic(string filePath) {

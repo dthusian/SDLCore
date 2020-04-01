@@ -5,3 +5,8 @@ obj/
 Obj/
 *.suo
 Properties/
+
+# Used to build releases, should not be committed
+*.dll
+*.so
+LICENSE.*.txt

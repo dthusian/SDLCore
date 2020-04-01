@@ -8,15 +8,7 @@ namespace SDLCore
   internal class ExtraSDLBindings
   {
     // We need this for some SDL functions
-    [DllImport("SDL2-2.0", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)]
     public static extern void SDL_free(IntPtr ptr);
-
-    [DllImport("SDL2_mixer-2.0", EntryPoint = "Mix_GetError", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr INTERNAL_Mix_GetError();
-
-    public static string Mix_GetError()
-    {
-      return SDLUtil.NullTerminatedUTF8String(INTERNAL_Mix_GetError());
-    }
   }
 }

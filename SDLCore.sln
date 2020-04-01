@@ -5,7 +5,12 @@ VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SDLCore", "SDLCore\SDLCore.csproj", "{87355134-8575-4EFF-A7E9-8678B32846BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDLCore.TestGUI", "SDLCore.TestGUI\SDLCore.TestGUI.csproj", "{8A9ED01F-F7AF-487F-B7FC-776338678EA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SDLCore.TestGUI", "SDLCore.TestGUI\SDLCore.TestGUI.csproj", "{8A9ED01F-F7AF-487F-B7FC-776338678EA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{184339DA-4093-4006-9B77-F2C3B6F8C067}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

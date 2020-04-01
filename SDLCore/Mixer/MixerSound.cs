@@ -5,7 +5,7 @@ using SDL2;
 
 namespace SDLCore.Mixer
 {
-  public class MixerSound : ISDLHandle
+  public class MixerSound : IMixerSound
   {
     IntPtr mixerChunkPtr;
     private int _volume = 64;

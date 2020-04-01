@@ -9,4 +9,13 @@
     <ProjectReference Include="..\SDLCore\SDLCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Kick-Drum-1.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snare-Drum-1.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
