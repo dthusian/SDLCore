@@ -23,7 +23,7 @@ namespace SDLCore.TestGUI
             app.RegisterWindow(new TestWindow1());
             break;
           }
-        case "graphics":
+        case "fps":
           {
             app.RegisterWindow(new TestWindow2());
             break;
@@ -31,6 +31,11 @@ namespace SDLCore.TestGUI
         case "mixer":
           {
             app.RegisterWindow(new TestWindow3());
+            break;
+          }
+        case "graphics":
+          {
+            app.RegisterWindow(new TestWindow4());
             break;
           }
         default:
